@@ -1,19 +1,15 @@
-# Dependencies
 node_modules/
 .pnp
 .pnp.js
 
-# Environment variables
 .env
 .env.local
 .env.production
 .env.test
 
-# Build outputs
 dist/
 build/
 
-# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -39,17 +35,13 @@ wheels/
 .installed.cfg
 *.egg
 
-# ML Model artifact (can be trained locally or committed depending on user preference)
-# ml_service/model/*.joblib
 
-# Logs
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# IDE & OS files
 .DS_Store
 Thumbs.db
 .vscode/
