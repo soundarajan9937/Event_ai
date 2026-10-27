@@ -1,13 +1,40 @@
 
 import axios from 'axios';
 
+// Sanitize backend API URL and strip accidental copy-paste artifacts like 'Copy URL'
+const sanitizeApiUrl = (url) => {
+  const fallback = 'https://event-backend-ch59.onrender.com/api';
+  if (!url || typeof url !== 'string') {
+    return fallback;
+  }
+
+  let cleaned = url
+    // Strip surrounding quotes
+    .replace(/^['"]+|['"]+$/g, '')
+    // Strip accidental 'Copy URL' button text or encoded variants from dashboard copy-paste
+    .replace(/%20Copy%20URL|Copy%20URL|CopyURL/gi, '')
+    // Trim whitespace
+    .trim()
+    // Remove any trailing slashes
+    .replace(/\/+$/, '');
+
+  if (!cleaned) {
+    return fallback;
+  }
+
+  // Ensure /api is appended if omitted
+  if (!cleaned.endsWith('/api')) {
+    cleaned = `${cleaned}/api`;
+  }
+
+  // Deduplicate if ending with /api/api
+  cleaned = cleaned.replace(/\/api\/api$/, '/api');
+
+  return cleaned;
+};
+
 // Backend API URL
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL ||
-  'https://event-backend-ch59.onrender.com/api'
-)
-  .trim()
-  .replace(/\/+$/, '');
+const API_BASE_URL = sanitizeApiUrl(import.meta.env.VITE_API_URL);
 
 // Create Axios instance
 const api = axios.create({
