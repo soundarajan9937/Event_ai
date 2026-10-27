@@ -272,6 +272,7 @@ const RealEventSearch = ({ user }) => {
                       event={event}
                       isAdmin={isAdmin}
                       onAddToMyEvents={handleAddToMyEvents}
+                      searchCategory={lastQuery.event || (eventCategory === "Other" ? customKeyword : eventCategory)}
                     />
                   ))}
                 </div>

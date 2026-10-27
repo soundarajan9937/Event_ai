@@ -391,14 +391,14 @@ function isEventInFuture(dateInfo) {
 function verifyRegistrationStatus(candidate) {
   const combined = `${candidate.title || ''} ${candidate.description || ''} ${candidate.ticketInfo || ''} ${candidate.link || ''} ${candidate.registrationUrl || ''}`.toLowerCase();
 
-  // 1. Negative Signals: Closed / Sold Out / Expired / Cancelled
-  const isClosedOrSoldOut = /\b(registration\s+closed|registrations?\s+closed|sold\s+out|housefull|booking\s+closed|bookings?\s+closed|tickets\s+sold\s+out|sales\s+ended|event\s+ended|event\s+completed|applications?\s+closed|admissions?\s+closed|ticket\s+booking\s+closed|cancelled|canceled)\b/i.test(combined);
+  // 1. Negative Signals: Closed / Sold Out / Expired / Cancelled / Past Events
+  const isClosedOrSoldOut = /\b(registrations?\s+(?:is|are|was|were|has\s+been|have\s+been)?\s*(?:closed|ended|over|full)|bookings?\s+(?:is|are|was|were|has\s+been|have\s+been)?\s*(?:closed|ended|over|full)|tickets?\s+(?:is|are|were|has\s+been|have\s+been)?\s*(?:sold\s+out|closed|ended|unavailable)|event\s+(?:has\s+)?(?:ended|concluded|completed|passed)|past\s+event|previous\s+event|applications?\s+(?:is|are|were)?\s*closed|entries\s+(?:is|are|were)?\s*closed|sold\s+out|housefull|cancelled|canceled)\b/i.test(combined);
 
   if (isClosedOrSoldOut) {
     return {
       registrationStatus: 'closed',
       registrationVerified: false,
-      reason: 'Registration is explicitly closed, sold out, or ended'
+      reason: 'Registration is explicitly closed, sold out, or event has already ended'
     };
   }
 
@@ -619,11 +619,26 @@ function filterCandidatesThroughWorkflow(candidates, targetCity, referenceNow) {
 
   for (const candidate of candidates) {
     // Step 4: Check Event Date
-    const dateInfo = parseEventDate(candidate.rawDateStr, `${candidate.title} ${candidate.description}`, referenceNow);
+    // If rawDateStr was directly provided by Google Events, evaluate it directly first
+    let dateInfo = null;
+    if (candidate.rawDateStr && candidate.rawDateStr.trim()) {
+      const rawDateParsed = parseEventDate(candidate.rawDateStr, '', referenceNow);
+      if (rawDateParsed.isValid) {
+        if (!isEventInFuture(rawDateParsed)) {
+          // Explicit event calendar date from Google has already passed -> strictly remove
+          continue;
+        }
+        dateInfo = rawDateParsed;
+      }
+    }
+
+    if (!dateInfo || !dateInfo.isValid) {
+      dateInfo = parseEventDate(candidate.rawDateStr, `${candidate.title} ${candidate.description}`, referenceNow);
+    }
 
     // Step 5: Is the Event in the Future?
     if (!isEventInFuture(dateInfo)) {
-      // If NO -> remove the event
+      // If NO or date has passed -> remove the event
       continue;
     }
     candidate.parsedDate = dateInfo;
