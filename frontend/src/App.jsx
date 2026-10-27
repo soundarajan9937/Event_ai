@@ -14,6 +14,7 @@ import EventDetails from './pages/EventDetails';
 import MyEvents from './pages/MyEvents';
 import AdminDashboard from './pages/AdminDashboard';
 import EventDashboard from './pages/EventDashboard';
+import RealEventSearch from './pages/RealEventSearch';
 
 import api from './api';
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/events" element={<Events user={user} />} />
           <Route path="/events/:id" element={<EventDetails user={user} />} />
           <Route path="/recommendations" element={<Recommendations user={user} />} />
+          <Route path="/real-events" element={<RealEventSearch user={user} />} />
 
           {/* Guest Routes (redirect if already logged in) */}
           <Route

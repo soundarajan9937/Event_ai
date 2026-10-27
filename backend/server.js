@@ -15,6 +15,7 @@ const authRoutes = require('./routes/authRoutes');
 const { router: eventRoutes, createEventHandler, updateEventHandler, deleteEventHandler } = require('./routes/eventRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const registrationRoutes = require('./routes/registrationRoutes');
+const eventSearchRoutes = require('./routes/eventSearchRoutes');
 const authMiddleware = require('./middleware/authMiddleware');
 const adminMiddleware = require('./middleware/adminMiddleware');
 const organizerMiddleware = require('./middleware/organizerMiddleware');
@@ -117,9 +118,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Database availability check: Fail-fast with clear 503 instead of buffering/hanging
+// Database availability check: Fail-fast with clear 503 instead of buffering/hanging (bypassed for health check and SerpApi real event search)
 app.use((req, res, next) => {
-  if (req.path.startsWith('/api') && req.path !== '/api/health') {
+  if (req.path.startsWith('/api') && req.path !== '/api/health' && req.path !== '/api/events/search') {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
         error: 'Database is initializing or currently unavailable. Please verify MongoDB service is running.'
@@ -132,6 +133,8 @@ app.use((req, res, next) => {
 // Mount Routes according to Section 23 specifications
 
 app.use('/api/auth', authRoutes);
+// Real Event Search (SerpApi) — mounted before platform eventRoutes for correct path priority
+app.use('/api/events', eventSearchRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api', registrationRoutes);

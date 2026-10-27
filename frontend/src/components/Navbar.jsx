@@ -56,6 +56,13 @@ const Navbar = ({ user, onLogout }) => {
                 Events
               </NavLink>
               <NavLink
+                to="/real-events"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeMobile}
+              >
+                Real Events
+              </NavLink>
+              <NavLink
                 to="/login"
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 onClick={closeMobile}
@@ -91,6 +98,13 @@ const Navbar = ({ user, onLogout }) => {
                 Events
               </NavLink>
               <NavLink
+                to="/real-events"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeMobile}
+              >
+                Real Events
+              </NavLink>
+              <NavLink
                 to="/recommendations"
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 onClick={closeMobile}
@@ -111,6 +125,13 @@ const Navbar = ({ user, onLogout }) => {
           {user && (user.role === 'organizer' || user.role === 'event') && (
             <>
               <NavLink
+                to="/real-events"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeMobile}
+              >
+                Real Events
+              </NavLink>
+              <NavLink
                 to="/event-dashboard"
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 style={{ color: 'var(--accent-green-light)', fontWeight: '600' }}
@@ -124,6 +145,13 @@ const Navbar = ({ user, onLogout }) => {
           {/* Logged in as Admin */}
           {user && user.role === 'admin' && (
             <>
+              <NavLink
+                to="/real-events"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={closeMobile}
+              >
+                Real Events
+              </NavLink>
               <NavLink
                 to="/event-dashboard"
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}

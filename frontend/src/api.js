@@ -40,4 +40,20 @@ api.interceptors.response.use(
   }
 );
 
+/**
+ * Search real upcoming events via our backend (which calls SerpApi server-side).
+ * The SerpApi key is NEVER exposed to the frontend.
+ *
+ * @param {string} city        - e.g. "Coimbatore"
+ * @param {string} eventType   - e.g. "Hackathon", "All Events", "Robotics"
+ * @param {number} page        - e.g. 1
+ */
+export const searchRealEvents = (city, eventType, page = 1) => {
+  const params = new URLSearchParams();
+  params.set('city', city || '');
+  params.set('event', eventType || 'all');
+  if (page) params.set('page', page.toString());
+  return api.get(`/events/search?${params.toString()}`);
+};
+
 export default api;
